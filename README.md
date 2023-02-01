@@ -15,8 +15,8 @@ Add the following entry in your `configuration.yaml`:
 
 ```yaml
 light:
-  - platform: example_light
-    host: HOST_HERE
-    username: USERNAME_HERE
-    password: PASSWORD_HERE_OR_secrets.yaml
+  - platform: xpoe_light
+    host:  "xpoelivein.local"
+    username: "usernamefromconfig"
+    password:  "usernamefromconfig"
 ```
