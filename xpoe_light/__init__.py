@@ -1,0 +1,1 @@
+"""XPOE Lights integration."""
