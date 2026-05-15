@@ -5,7 +5,7 @@ DOMAIN = "xpoe"
 
 try:
     from homeassistant.const import Platform
-    PLATFORMS: list[Platform] = [Platform.LIGHT, Platform.SENSOR]
+    PLATFORMS: list[Platform] = [Platform.LIGHT, Platform.SENSOR, Platform.BINARY_SENSOR]
 except ImportError:
     # Allow this module to import outside Home Assistant (e.g. smoke tests).
     PLATFORMS = []
