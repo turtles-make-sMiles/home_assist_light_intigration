@@ -1,0 +1,42 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "Add X-PoE switch",
+        "description": "{scan_status}. Select one or enter an IP manually.",
+        "data": {
+          "device": "Switch"
+        }
+      },
+      "manual": {
+        "title": "Add X-PoE switch by IP",
+        "description": "{scan_status}\n\nEnter the IP address and credentials for your X-PoE switch.",
+        "data": {
+          "host": "Host (IP or hostname)",
+          "username": "Username",
+          "password": "Password",
+          "port": "HTTPS port",
+          "verify_ssl": "Verify SSL certificate"
+        }
+      },
+      "creds": {
+        "title": "Set up discovered X-PoE switch",
+        "description": "Found X-PoE switch at {host} (MAC {mac}). Enter the credentials to finish setup.",
+        "data": {
+          "username": "Username",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot reach the switch. Check the host and port.",
+      "invalid_auth": "Login failed. Check your username and password.",
+      "unknown": "Unexpected error. See the Home Assistant log."
+    },
+    "abort": {
+      "already_configured": "This X-PoE switch is already configured.",
+      "not_xpoe_device": "Discovered service does not appear to be an X-PoE switch."
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "domain": "xpoe",
+  "name": "X-PoE",
+  "version": "0.1.0",
+  "config_flow": true,
+  "iot_class": "local_polling",
+  "documentation": "https://amatiscontrols.com",
+  "issue_tracker": "https://github.com/amatiscontrols/ha-xpoe/issues",
+  "codeowners": [],
+  "requirements": [],
+  "dependencies": [],
+  "zeroconf": [
+    { "type": "_xpoe_lighting._tcp.local." }
+  ]
+}
