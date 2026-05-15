@@ -15,27 +15,24 @@ Local control of Amatis X-PoE lighting switches (XS-108H family) over their REST
 
 This repository is hosted on Bitbucket. HACS only supports GitHub-hosted custom repositories, so installation is **manual** for now. A GitHub mirror could be added later if HACS support becomes important.
 
-### One-line install / update
-
-From inside your Home Assistant `config/custom_components/` directory:
-
-```bash
-curl -fsSL https://bitbucket.org/amatiscontrols/home_assist_light_intigration/raw/main/install.sh | bash
-```
-
-(Use `wget -qO- ... | bash` if you don't have curl.)
-
-The script downloads the latest tarball, drops `xpoe/` into the current directory, and backs up any existing install as `xpoe.bak.<timestamp>`. Pin a specific tag with `XPOE_REF=v0.1.0 curl ... | bash`.
-
-Then restart Home Assistant and add the integration:
-**Settings → Devices & Services → Add Integration → "X-PoE"**.
-
 ### Manual
 
 1. Clone or download a zip of `https://bitbucket.org/amatiscontrols/home_assist_light_intigration`.
 2. Copy the `custom_components/xpoe/` folder into your Home Assistant `config/custom_components/` directory.
 3. Restart Home Assistant.
 4. **Settings → Devices & Services → Add Integration** → "X-PoE".
+
+### One-line install / update (FUTURE — not ready yet)
+
+> **Not validated.** `install.sh` is in the repo but hasn't been tested end-to-end against a published Bitbucket release. Use the manual steps above for now.
+
+Once it's verified, this will work from your `config/custom_components/` directory:
+
+```bash
+curl -fsSL https://bitbucket.org/amatiscontrols/home_assist_light_intigration/raw/main/install.sh | bash
+```
+
+(Will support `XPOE_REF=v0.1.0 curl ... | bash` for pinning tags, and `wget -qO- ... | bash` as an alternative.)
 
 ## Adding a switch
 
