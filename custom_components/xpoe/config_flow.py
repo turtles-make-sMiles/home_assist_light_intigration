@@ -106,7 +106,9 @@ async def _scan_for_xpoe(hass, timeout: float = SCAN_TIMEOUT_SECONDS) -> list[di
 
     seen_names: set[str] = set()
 
-    def handler(zc, service_type, name, state_change):
+    # zeroconf invokes handlers via kwargs (zeroconf=, service_type=, name=, state_change=)
+    # so the parameter NAMES must match exactly.
+    def handler(zeroconf, service_type, name, state_change):
         if state_change is ServiceStateChange.Added:
             seen_names.add(name)
 
