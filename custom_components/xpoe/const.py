@@ -1,11 +1,14 @@
 """Constants for the X-PoE integration."""
 from __future__ import annotations
 
-from homeassistant.const import Platform
-
 DOMAIN = "xpoe"
 
-PLATFORMS: list[Platform] = [Platform.LIGHT, Platform.SENSOR]
+try:
+    from homeassistant.const import Platform
+    PLATFORMS: list[Platform] = [Platform.LIGHT, Platform.SENSOR]
+except ImportError:
+    # Allow this module to import outside Home Assistant (e.g. smoke tests).
+    PLATFORMS = []
 
 DEFAULT_PORT = 443
 DEFAULT_SCHEME = "https"

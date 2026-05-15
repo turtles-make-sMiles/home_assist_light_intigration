@@ -13,18 +13,29 @@ Local control of Amatis X-PoE lighting switches (XS-108H family) over their REST
 
 ## Installation
 
-### HACS (recommended)
+This repository is hosted on Bitbucket. HACS only supports GitHub-hosted custom repositories, so installation is **manual** for now. A GitHub mirror could be added later if HACS support becomes important.
 
-1. In HACS, go to **Integrations** → ⋮ → **Custom repositories**.
-2. Paste the repository URL and pick category **Integration**.
-3. Click **Install** on the X-PoE entry, then restart Home Assistant.
-4. Go to **Settings → Devices & Services → Add Integration** → search "X-PoE".
+### One-line install / update
+
+From inside your Home Assistant `config/custom_components/` directory:
+
+```bash
+curl -fsSL https://bitbucket.org/amatiscontrols/home_assist_light_intigration/raw/main/install.sh | bash
+```
+
+(Use `wget -qO- ... | bash` if you don't have curl.)
+
+The script downloads the latest tarball, drops `xpoe/` into the current directory, and backs up any existing install as `xpoe.bak.<timestamp>`. Pin a specific tag with `XPOE_REF=v0.1.0 curl ... | bash`.
+
+Then restart Home Assistant and add the integration:
+**Settings → Devices & Services → Add Integration → "X-PoE"**.
 
 ### Manual
 
-1. Copy the `custom_components/xpoe/` folder into your Home Assistant `config/custom_components/` directory.
-2. Restart Home Assistant.
-3. **Settings → Devices & Services → Add Integration** → "X-PoE".
+1. Clone or download a zip of `https://bitbucket.org/amatiscontrols/home_assist_light_intigration`.
+2. Copy the `custom_components/xpoe/` folder into your Home Assistant `config/custom_components/` directory.
+3. Restart Home Assistant.
+4. **Settings → Devices & Services → Add Integration** → "X-PoE".
 
 ## Adding a switch
 
