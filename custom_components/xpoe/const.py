@@ -12,10 +12,12 @@ except ImportError:
 
 DEFAULT_PORT = 443
 DEFAULT_SCHEME = "https"
-DEFAULT_USERNAME = "xpoeclient"
-DEFAULT_PASSWORD = "xpoepass"
 DEFAULT_SCAN_INTERVAL_SECONDS = 10
 DEFAULT_FADE_TIME_SECONDS = 2
+
+# Where users find their switch's credentials. Surfaced in the config flow
+# and the manifest.
+CREDS_DOCS_URL = "https://docs.luum.io/install_guides/xs_108h_ig/"
 
 NUM_PORTS = 8
 CHANNELS_PER_PORT = 2

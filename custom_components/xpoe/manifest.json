@@ -4,12 +4,13 @@
   "version": "0.1.0",
   "config_flow": true,
   "iot_class": "local_polling",
-  "documentation": "https://bitbucket.org/amatiscontrols/home_assist_light_intigration",
+  "documentation": "https://docs.luum.io/install_guides/xs_108h_ig/",
   "issue_tracker": "https://bitbucket.org/amatiscontrols/home_assist_light_intigration/issues",
   "codeowners": [],
   "requirements": [],
   "dependencies": [],
   "zeroconf": [
-    { "type": "_xpoe_lighting._tcp.local." }
+    { "type": "_xpoe_lighting._tcp.local." },
+    { "type": "_http._tcp.local.", "name": "xpoe-*" }
   ]
 }

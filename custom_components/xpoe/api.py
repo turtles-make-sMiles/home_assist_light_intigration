@@ -13,10 +13,8 @@ import aiohttp
 
 from .const import (
     DEFAULT_FADE_TIME_SECONDS,
-    DEFAULT_PASSWORD,
     DEFAULT_PORT,
     DEFAULT_SCHEME,
-    DEFAULT_USERNAME,
     EXP_SKEW_SECONDS,
 )
 
@@ -60,10 +58,10 @@ class XPoEClient:
         host: str,
         session: aiohttp.ClientSession,
         *,
+        username: str,
+        password: str,
         port: int = DEFAULT_PORT,
         scheme: str = DEFAULT_SCHEME,
-        username: str = DEFAULT_USERNAME,
-        password: str = DEFAULT_PASSWORD,
         verify_ssl: bool = False,
         request_timeout: float = 5.0,
     ) -> None:

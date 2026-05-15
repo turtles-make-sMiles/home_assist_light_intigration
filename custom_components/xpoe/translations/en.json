@@ -11,7 +11,7 @@
       },
       "manual": {
         "title": "Add X-PoE switch by IP",
-        "description": "{scan_status}\n\nEnter the IP address and credentials for your X-PoE switch.",
+        "description": "{scan_status}\n\nEnter the IP address and credentials for your X-PoE switch.\n\nCredentials are documented in the install guide: {creds_docs}",
         "data": {
           "host": "Host (IP or hostname)",
           "username": "Username",
@@ -22,7 +22,7 @@
       },
       "creds": {
         "title": "Set up discovered X-PoE switch",
-        "description": "Found X-PoE switch at {host} (MAC {mac}). Enter the credentials to finish setup.",
+        "description": "Found X-PoE switch at {host} (MAC {mac}).\n\nEnter the credentials to finish setup. They are documented in the install guide: {creds_docs}",
         "data": {
           "username": "Username",
           "password": "Password"
@@ -31,7 +31,7 @@
     },
     "error": {
       "cannot_connect": "Cannot reach the switch. Check the host and port.",
-      "invalid_auth": "Login failed. Check your username and password.",
+      "invalid_auth": "Login failed. Check the install guide for credentials: https://docs.luum.io/install_guides/xs_108h_ig/",
       "unknown": "Unexpected error. See the Home Assistant log."
     },
     "abort": {

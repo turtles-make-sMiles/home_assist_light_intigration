@@ -34,25 +34,28 @@ from .api import (
 )
 from .const import (
     CONF_VERIFY_SSL,
-    DEFAULT_PASSWORD,
+    CREDS_DOCS_URL,
     DEFAULT_PORT,
     DEFAULT_SCHEME,
-    DEFAULT_USERNAME,
     DOMAIN,
 )
 
 _LOGGER = logging.getLogger(__name__)
 
 MAC_HEX_RE = re.compile(r"([0-9a-f]{12})", re.IGNORECASE)
-XPOE_SERVICE_TYPE = "_xpoe_lighting._tcp.local."
+XPOE_INSTANCE_PREFIX = "xpoe-"
+XPOE_SERVICE_TYPES: tuple[str, ...] = (
+    "_xpoe_lighting._tcp.local.",
+    "_http._tcp.local.",
+)
 SCAN_TIMEOUT_SECONDS = 5.0
 MANUAL_CHOICE = "manual"
 
 STEP_MANUAL_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_HOST): str,
-        vol.Required(CONF_USERNAME, default=DEFAULT_USERNAME): str,
-        vol.Required(CONF_PASSWORD, default=DEFAULT_PASSWORD): str,
+        vol.Required(CONF_USERNAME): str,
+        vol.Required(CONF_PASSWORD): str,
         vol.Optional(CONF_PORT, default=DEFAULT_PORT): int,
         vol.Optional(CONF_VERIFY_SSL, default=False): bool,
     }
@@ -60,8 +63,8 @@ STEP_MANUAL_SCHEMA = vol.Schema(
 
 STEP_CREDS_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_USERNAME, default=DEFAULT_USERNAME): str,
-        vol.Required(CONF_PASSWORD, default=DEFAULT_PASSWORD): str,
+        vol.Required(CONF_USERNAME): str,
+        vol.Required(CONF_PASSWORD): str,
     }
 )
 
@@ -96,6 +99,22 @@ def _extract_mac(*candidates: str) -> str | None:
     return None
 
 
+def _is_xpoe_instance(fqdn: str) -> tuple[bool, str | None]:
+    """If fqdn is an xpoe-* instance under one of our service types, return (True, service_type)."""
+    lowered = fqdn.lower()
+    for svc in XPOE_SERVICE_TYPES:
+        suffix = "." + svc
+        if lowered.endswith(suffix):
+            instance = lowered[: -len(suffix)]
+        elif lowered.endswith(svc) and lowered != svc:
+            instance = lowered[: -len(svc)]
+        else:
+            continue
+        if instance.startswith(XPOE_INSTANCE_PREFIX):
+            return True, svc
+    return False, None
+
+
 async def _scan_for_xpoe(hass, timeout: float = SCAN_TIMEOUT_SECONDS) -> list[dict[str, str]]:
     """Active mDNS browse + cache harvest for X-PoE switches. Returns [{mac_id, host}, ...]."""
     try:
@@ -104,39 +123,45 @@ async def _scan_for_xpoe(hass, timeout: float = SCAN_TIMEOUT_SECONDS) -> list[di
         _LOGGER.exception("Could not get zeroconf instance for scan")
         return []
 
-    seen_names: set[str] = set()
+    # (name_lower -> service_type) so we dedupe browser + cache hits regardless of case.
+    seen: dict[str, str] = {}
 
     # zeroconf invokes handlers via kwargs (zeroconf=, service_type=, name=, state_change=)
     # so the parameter NAMES must match exactly.
     def handler(zeroconf, service_type, name, state_change):
-        if state_change is ServiceStateChange.Added:
-            seen_names.add(name)
+        if state_change is not ServiceStateChange.Added:
+            return
+        is_xpoe, svc = _is_xpoe_instance(name)
+        if is_xpoe and svc:
+            seen[name.lower()] = svc
 
-    browser = AsyncServiceBrowser(aiozc.zeroconf, [XPOE_SERVICE_TYPE], handlers=[handler])
+    browser = AsyncServiceBrowser(aiozc.zeroconf, list(XPOE_SERVICE_TYPES), handlers=[handler])
     try:
         await asyncio.sleep(timeout)
     finally:
         await browser.async_cancel()
 
-    # Belt-and-suspenders: also harvest any instances HA has already cached
-    # from prior passive discovery. The fresh browser sometimes misses those.
+    # Belt-and-suspenders: harvest anything HA has already cached.
     try:
         for cached in aiozc.zeroconf.cache.names():
-            if cached.endswith(XPOE_SERVICE_TYPE) and cached != XPOE_SERVICE_TYPE:
-                seen_names.add(cached)
+            is_xpoe, svc = _is_xpoe_instance(cached)
+            if is_xpoe and svc:
+                seen.setdefault(cached.lower(), svc)
     except Exception:
         _LOGGER.debug("could not enumerate zeroconf cache", exc_info=True)
 
     _LOGGER.info(
         "X-PoE mDNS scan: discovered %d instance(s) in %.1fs: %s",
-        len(seen_names),
+        len(seen),
         timeout,
-        sorted(seen_names),
+        sorted(seen),
     )
 
-    results: list[dict[str, str]] = []
-    for name in seen_names:
-        info = AsyncServiceInfo(XPOE_SERVICE_TYPE, name)
+    # Resolve each and dedupe by MAC (first resolve wins; xpoe_lighting listed before http
+    # so it takes precedence when both exist).
+    by_mac: dict[str, dict[str, str]] = {}
+    for name, svc in seen.items():
+        info = AsyncServiceInfo(svc, name)
         try:
             ok = await info.async_request(aiozc.zeroconf, 2000)
         except Exception:
@@ -146,16 +171,24 @@ async def _scan_for_xpoe(hass, timeout: float = SCAN_TIMEOUT_SECONDS) -> list[di
             _LOGGER.warning("X-PoE mDNS resolve failed (no response): %s", name)
             continue
         addrs = info.parsed_addresses() or []
-        if not addrs:
+        ipv4 = [a for a in addrs if ":" not in a]
+        host = (ipv4 or addrs or [None])[0]
+        if not host:
             _LOGGER.warning("X-PoE mDNS resolve returned no address: %s", name)
             continue
         mac_id = _extract_mac(name, info.server or "")
         if not mac_id:
             _LOGGER.warning("X-PoE mDNS could not extract MAC from name: %s", name)
             continue
-        results.append({"mac_id": mac_id, "host": addrs[0], "name": name})
+        if mac_id not in by_mac:
+            by_mac[mac_id] = {"mac_id": mac_id, "host": host, "name": name}
 
-    _LOGGER.info("X-PoE mDNS scan: %d switch(es) usable after resolve", len(results))
+    results = list(by_mac.values())
+    _LOGGER.info(
+        "X-PoE mDNS scan: %d unique switch(es) usable after resolve+dedupe: %s",
+        len(results),
+        [(r["mac_id"], r["host"]) for r in results],
+    )
     return results
 
 
@@ -264,7 +297,10 @@ class XPoEConfigFlow(ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="manual",
             data_schema=STEP_MANUAL_SCHEMA,
-            description_placeholders={"scan_status": self._scan_status},
+            description_placeholders={
+                "scan_status": self._scan_status,
+                "creds_docs": CREDS_DOCS_URL,
+            },
             errors=errors,
         )
 
@@ -304,6 +340,7 @@ class XPoEConfigFlow(ConfigFlow, domain=DOMAIN):
             description_placeholders={
                 "host": self._discovered_host,
                 "mac": self._discovered_mac,
+                "creds_docs": CREDS_DOCS_URL,
             },
             errors=errors,
         )

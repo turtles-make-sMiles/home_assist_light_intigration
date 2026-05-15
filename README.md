@@ -38,10 +38,13 @@ curl -fsSL https://bitbucket.org/amatiscontrols/home_assist_light_intigration/ra
 
 When you launch the flow it does a quick mDNS scan:
 
-- **Switches found** → pick one from the list, enter username + password (defaults `xpoeclient` / `xpoepass`).
+- **Switches found** → pick one from the list, then enter username + password.
 - **Nothing found** → enter the IP manually. The form will say "0 X-PoE switches found on the network".
 
 Already-configured switches don't appear in the picker.
+
+Credentials are documented in the XS-108H install guide:
+**https://docs.luum.io/install_guides/xs_108h_ig/**
 
 ## Entities created (per switch)
 
@@ -57,7 +60,8 @@ Already-configured switches don't appear in the picker.
 
 **`Cannot reach the switch`** — verify HTTPS is reachable on port 443 of the switch's IP. The integration tolerates self-signed certs by default.
 
-**`Login failed`** — credentials wrong. The switch's defaults are `xpoeclient` / `xpoepass` unless changed.
+**`Login failed`** — credentials wrong. See the XS-108H install guide for the correct username/password:
+https://docs.luum.io/install_guides/xs_108h_ig/
 
 
 ## Status
