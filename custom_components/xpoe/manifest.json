@@ -6,7 +6,7 @@
   "iot_class": "local_polling",
   "documentation": "https://docs.luum.io/install_guides/xs_108h_ig/",
   "issue_tracker": "https://bitbucket.org/amatiscontrols/home_assist_light_intigration/issues",
-  "codeowners": [],
+  "codeowners": ["@turtles-make-sMiles"],
   "requirements": [],
   "dependencies": [],
   "zeroconf": [

@@ -13,7 +13,17 @@ Local control of Amatis X-PoE lighting switches (XS-108H family) over their REST
 
 ## Installation
 
-This repository is hosted on Bitbucket. HACS only supports GitHub-hosted custom repositories, so installation is **manual** for now. A GitHub mirror could be added later if HACS support becomes important.
+The repo is mirrored on GitHub for HACS install:
+**https://github.com/turtles-make-sMiles/home_assist_light_intigration**
+
+Bitbucket (`amatiscontrols/home_assist_light_intigration`) is the source of truth; the GitHub mirror is updated via `./sync.sh` after every push.
+
+### HACS (recommended)
+
+1. In HACS, open **Integrations → ⋮ → Custom repositories**.
+2. Paste `https://github.com/turtles-make-sMiles/home_assist_light_intigration`, category **Integration**, click Add.
+3. Click **Install** on the X-PoE entry, then restart Home Assistant.
+4. **Settings → Devices & Services → Add Integration** → "X-PoE".
 
 ### Manual
 
