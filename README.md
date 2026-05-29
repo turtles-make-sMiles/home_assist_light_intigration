@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="luum-logo.svg" alt="Luum" width="240">
+</p>
+
 # X-PoE — Home Assistant integration
 
 Local control of Amatis X-PoE lighting switches (XS-108H family) over their REST API. No cloud, no relay — talks directly to the switch on your LAN.

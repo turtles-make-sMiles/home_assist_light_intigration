@@ -1,7 +1,7 @@
 {
   "domain": "xpoe",
   "name": "X-PoE",
-  "version": "0.1.0",
+  "version": "1.0.1",
   "config_flow": true,
   "iot_class": "local_polling",
   "documentation": "https://docs.luum.io/install_guides/xs_108h_ig/",
