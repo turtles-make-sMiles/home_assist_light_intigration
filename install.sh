@@ -4,7 +4,10 @@
 # Run from inside your Home Assistant `config/custom_components/` directory:
 #
 #   cd /path/to/homeassistant/config/custom_components
-#   curl -fsSL https://bitbucket.org/amatiscontrols/home_assist_light_intigration/raw/main/install.sh | bash
+#   curl -fsSL https://api.bitbucket.org/2.0/repositories/amatiscontrols/home_assist_light_intigration/src/main/install.sh | bash
+#
+# Note: use the api.bitbucket.org /src/main/ URL, not the browser /raw/main/ URL —
+# the raw URL 404s for anonymous curl even on public repos.
 #
 # Pin a specific tag or branch:
 #   curl ... | XPOE_REF=v0.1.0 bash

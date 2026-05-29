@@ -79,6 +79,29 @@ class XPoEPortLight(CoordinatorEntity[XPoEDataUpdateCoordinator], LightEntity):
     def _current_level(self) -> float:
         return self.coordinator.port_level(self._port_number)
 
+    def _channel_states(self) -> list[dict[str, Any]]:
+        """Return the two channel-state dicts from /api/info for this port."""
+        info = (self.coordinator.data or {}).get("info") or {}
+        for port in info.get("ports", []):
+            if port.get("id") == self._port_number:
+                return [ch.get("state") or {} for ch in port.get("channels", [])]
+        return []
+
+    def _detection_statuses(self) -> list[str]:
+        return [s.get("detection_status", "") for s in self._channel_states()]
+
+    @property
+    def available(self) -> bool:
+        if not super().available:
+            return False
+        statuses = self._detection_statuses()
+        if not statuses:
+            # No detection data yet (pre-first-poll or stripped response).
+            # Default to unavailable; first successful poll will flip us on.
+            return False
+        # All channels report OPEN_CIRCUIT => nothing plugged in => not controllable.
+        return not all(s == "OPEN_CIRCUIT" for s in statuses)
+
     @property
     def is_on(self) -> bool | None:
         if self.coordinator.data is None:
@@ -90,6 +113,13 @@ class XPoEPortLight(CoordinatorEntity[XPoEDataUpdateCoordinator], LightEntity):
         if self.coordinator.data is None:
             return None
         return _level_to_brightness(self._current_level)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any] | None:
+        statuses = self._detection_statuses()
+        if not statuses:
+            return None
+        return {"detection_status": statuses}
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         brightness = kwargs.get(ATTR_BRIGHTNESS)
