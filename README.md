@@ -29,10 +29,10 @@ This repository is hosted on Bitbucket. HACS only supports GitHub-hosted custom 
 Once it's verified, this will work from your `config/custom_components/` directory:
 
 ```bash
-curl -fsSL https://api.bitbucket.org/2.0/repositories/amatiscontrols/home_assist_light_intigration/src/main/install.sh | bash
+curl -fsSL https://api.bitbucket.org/2.0/repositories/amatiscontrols/home_assist_light_intigration/src/master/install.sh | bash
 ```
 
-Note: use the **API endpoint** (`api.bitbucket.org/.../src/main/...`), not the browser raw URL (`bitbucket.org/.../raw/main/...`). The raw URL 404s for anonymous curl on Bitbucket; the API endpoint serves the file content reliably.
+Note: use the **API endpoint** (`api.bitbucket.org/.../src/master/...`), not the browser raw URL (`bitbucket.org/.../raw/master/...`). The raw URL 404s for anonymous curl on Bitbucket; the API endpoint serves the file content reliably.
 
 Will support `XPOE_REF=v0.1.0 curl ... | bash` for pinning tags, and `wget -qO- ... | bash` as an alternative.
 

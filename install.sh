@@ -4,9 +4,9 @@
 # Run from inside your Home Assistant `config/custom_components/` directory:
 #
 #   cd /path/to/homeassistant/config/custom_components
-#   curl -fsSL https://api.bitbucket.org/2.0/repositories/amatiscontrols/home_assist_light_intigration/src/main/install.sh | bash
+#   curl -fsSL https://api.bitbucket.org/2.0/repositories/amatiscontrols/home_assist_light_intigration/src/master/install.sh | bash
 #
-# Note: use the api.bitbucket.org /src/main/ URL, not the browser /raw/main/ URL —
+# Note: use the api.bitbucket.org /src/master/ URL, not the browser /raw/master/ URL —
 # the raw URL 404s for anonymous curl even on public repos.
 #
 # Pin a specific tag or branch:
@@ -19,7 +19,7 @@ set -euo pipefail
 WORKSPACE="amatiscontrols"
 REPO="home_assist_light_intigration"
 TARGET_NAME="xpoe"
-REF="${XPOE_REF:-main}"
+REF="${XPOE_REF:-master}"
 ARCHIVE_URL="https://bitbucket.org/${WORKSPACE}/${REPO}/get/${REF}.tar.gz"
 
 err() { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
